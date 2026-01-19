@@ -1,41 +1,24 @@
+<!--Главная страница (главный шаблон приложения)-->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Генерируемый CSRF-токен -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Управление товарами</title>
-    
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome для иконок -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <style>
-        body {
-            padding-top: 20px;
-            background-color: #f8f9fa;
-        }
-        .table-container {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .action-buttons {
-            display: flex;
-            gap: 5px;
-        }
-        .modal-content {
-            border-radius: 10px;
-        }
-    </style>
+    <link href="{{ asset('css/libs/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- Стили для иконок -->
+    <link rel="stylesheet" href="{{ asset('css/libs/all.min.css') }}">
+    <!-- Стили для страницы -->
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 <body>
     <div class="container">
+        <!-- Контент страницы -->
         @yield('content')
     </div>
-
     <!-- Модальные окна -->
     <div class="modal fade" id="productModal" tabindex="-1">
         <div class="modal-dialog">
@@ -82,11 +65,11 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+    <!-- Подключение Bootstrap JS Bundle с Popper -->
+    <script src="{{ asset('js/libs/bootstrap.bundle.min.js') }}"></script>
+    <!-- Подключение jQuery -->
+    <script src="{{ asset('js/libs/jquery-3.6.0.min.js') }}"></script>
+    <!--- Подключение пользовательских JavaScript файлов/или сценарий из шаблонов -->
     @yield('scripts')
 </body>
 </html>

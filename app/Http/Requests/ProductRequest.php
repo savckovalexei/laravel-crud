@@ -1,18 +1,40 @@
 <?php
-
+/**
+ * Request класс для валидации данных товара
+ * 
+ * Содержит правила валидации для создания и обновления товаров.
+ * Включает валидацию изображений и их размеров.
+ * 
+ * @package App\Http\Requests
+ */
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 class ProductRequest extends FormRequest
 {
+    /**
+     * Определить имеет ли пользователь право на выполнение запроса
+     * 
+     * Всегда возвращает true, так как авторизация
+     * обрабатывается на уровне маршрутов или middleware.
+     * 
+     * @return bool
+     */
     public function authorize(): bool
     {
         return true;
     }
-
+    /**
+     * Правила валидации для товара
+     * 
+     * Определяет правила для всех полей товара.
+     * 
+     * @return array
+     */
     public function rules(): array
     {
+        // Базовые правила валидации
         $rules = [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -29,7 +51,13 @@ class ProductRequest extends FormRequest
 
         return $rules;
     }
-
+    /**
+     * Пользовательские сообщения об ошибках валидации
+     * 
+     * Определяет понятные сообщения для пользователя на русском языке.
+     * 
+     * @return array
+     */
     public function messages(): array
     {
         return [

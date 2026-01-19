@@ -1,0 +1,17 @@
+body {
+    padding-top: 20px;
+    background-color: #f8f9fa;
+}
+.table-container {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.action-buttons {
+     display: flex;
+     gap: 5px;
+}
+ .modal-content {
+   border-radius: 10px;
+}
