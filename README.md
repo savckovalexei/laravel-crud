@@ -156,7 +156,7 @@ server {
 ### 1. Главная страница с таблицей товаров
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/savckovalexei/laravel-crud/main/docs/screenshots/main-page.png" alt="Главная страница" width="700">
+  <img src="https://github.com/savckovalexei/laravel-crud/tree/main/docs/screenshots/main-page.png" alt="Главная страница" width="700">
 </p>
 
 
