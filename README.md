@@ -149,18 +149,3 @@ server {
     client_max_body_size 100M;
     fastcgi_read_timeout 300;
 }
-
-
-## Скриншоты
-
-### 1. Главная страница с таблицей товаров
-
-<p align="center">
-  <img src="https://github.com/savckovalexei/laravel-crud/tree/main/docs/screenshots/main-page.png" alt="Главная страница" width="700">
-</p>
-
-
-### 2. Форма добавления товара
-<p align="center">
-  <img src="https://raw.githubusercontent.com/savckovalexei/laravel-crud/main/docs/screenshots/add-product-form.png" alt="Форма добавления товара" width="700">
-</p>
