@@ -14,9 +14,9 @@
 3. AJAX взаимодействие: Обновление данных без перезагрузки страницы
 
 Технологический стек
-Бэкенд
+    
+    Бэкенд
     Laravel 10.x — PHP фреймворк
-
     MySQL 8.0 — Реляционная база данных
 
 Фронтенд
@@ -79,6 +79,7 @@ php artisan key:generate
 
 4. Настройка базы данных
 Отредактируйте файл .env:
+
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -104,9 +105,7 @@ php artisan db:seed --class=ProductSeeder
 <IfModule mod_rewrite.c>
 
 
-RewriteEngine On  
-
-# Redirect from root to the public directory  
+RewriteEngine On    
 RewriteCond %{REQUEST_URI} !^/public/  
 RewriteRule ^(.*)$ public/$1 [L]  
 
@@ -150,3 +149,18 @@ server {
     client_max_body_size 100M;
     fastcgi_read_timeout 300;
 }
+
+
+## Скриншоты
+
+### 1. Главная страница с таблицей товаров
+![Главная страница](docs/screenshots/main-page.png)
+
+<p align="center">
+  <img src="docs/screenshots/main-page.png" alt="Главная страница" width="700">
+</p>
+
+### 2. Форма добавления товара
+<p align="center">
+  <img src="docs/screenshots/add-product-form.png" alt="Форма добавления товара" width="700">
+</p>
