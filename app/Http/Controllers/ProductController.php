@@ -11,18 +11,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants\HttpStatusCodes;
+use App\Constants\ProductMessages;
+use App\Contracts\ProductServiceInterface;
+use App\Exceptions\ProductNotFoundException;
 use App\Http\Requests\ProductRequest;
-use App\Services\ProductService;
+use App\Http\Resources\ProductResource;
+use App\Http\Traits\HandlesJsonResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
+    use HandlesJsonResponse;
     
     /**
      * Сервис для работы с товарами
      * 
-     * @var ProductService
+     * @var ProductServiceInterface
      */
 
     protected $productService;
@@ -30,11 +37,12 @@ class ProductController extends Controller
     /**
      * Конструктор контроллера
      * 
-     * Внедрение зависимости ProductService через DI контейнер Laravel.
+     * Внедрение зависимости ProductServiceInterface через DI контейнер Laravel.
+     * Использование интерфейса позволяет легко заменять реализацию и создавать моки для тестов.
      * 
-     * @param ProductService $productService Сервис для бизнес-логики товаров
+     * @param ProductServiceInterface $productService Сервис для бизнес-логики товаров
      */
-    public function __construct(ProductService $productService)
+    public function __construct(ProductServiceInterface $productService)
     {
         $this->productService = $productService;
     }
@@ -61,7 +69,7 @@ class ProductController extends Controller
         // Получаем товары через сервис с применением фильтров
         $products = $this->productService->getAllProducts($filters);
         // Возвращаем JSON ответ с HTML представлениями
-        return response()->json([
+        return $this->dataResponse([
             'html' => view('products.partials.table', compact('products'))->render(),
             'pagination' => view('products.partials.pagination', compact('products'))->render()
         ]);
@@ -82,22 +90,20 @@ class ProductController extends Controller
     public function store(ProductRequest $request): JsonResponse
     {
         try {
-            
             // Получаем валидированные данные из запроса
             $validatedData = $request->validated();
             // Создаем товар через сервис
             $product = $this->productService->createProduct($validatedData);
-            // Возвращаем успешный ответ
-            return response()->json([
-                'success' => true,
-                'message' => 'Товар успешно создан',
-                'product' => $product
+            // Возвращаем успешный ответ с отформатированными данными
+            return $this->successResponse('Товар успешно создан', [
+                'product' => new ProductResource($product)
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибка при создании товара'
-            ], 500);
+            Log::error('Ошибка при создании товара', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return $this->errorResponse('Ошибка при создании товара');
         }
     }
 
@@ -111,21 +117,19 @@ class ProductController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        // Получаем товар через сервис
-        $product = $this->productService->getProductById($id);
+        try {
+            // Получаем товар через сервис
+            $product = $this->productService->getProductById($id);
 
-        // Проверяем найден ли товар
-        if (!$product) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Товар не найден'
-            ], 404);
+            // Проверяем найден ли товар
+            if (!$product) {
+                return $this->notFoundResponse(ProductMessages::NOT_FOUND);
+            }
+            // Возвращаем данные товара в отформатированном виде
+            return $this->dataResponse(['product' => new ProductResource($product)]);
+        } catch (ProductNotFoundException $e) {
+            return $this->notFoundResponse($e->getMessage());
         }
-        // Возвращаем данные товара
-        return response()->json([
-            'success' => true,
-            'product' => $product
-        ]);
     }
 
     /**
@@ -144,24 +148,18 @@ class ProductController extends Controller
             // Получаем валидированные данные
             $data = $request->validated();
             // Обновляем товар через сервис
-            $updated = $this->productService->updateProduct($id, $data);
-            // Проверяем успешность обновления
-            if (!$updated) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Товар не найден'
-                ], 404);
-            }
+            $this->productService->updateProduct($id, $data);
             // Возвращаем успешный ответ
-            return response()->json([
-                'success' => true,
-                'message' => 'Товар успешно обновлен'
-            ]);
+            return $this->successResponse(ProductMessages::UPDATED_SUCCESS);
+        } catch (ProductNotFoundException $e) {
+            return $this->notFoundResponse($e->getMessage());
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибка при обновлении товара'
-            ], 500);
+            Log::error(ProductMessages::LOG_UPDATE_ERROR, [
+                'id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return $this->errorResponse(ProductMessages::UPDATE_ERROR);
         }
     }
 
@@ -178,24 +176,18 @@ class ProductController extends Controller
     {
         try {
             // Удаляем товар через сервис
-            $deleted = $this->productService->deleteProduct($id);
-            // Проверяем успешность удаления
-            if (!$deleted) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Товар не найден'
-                ], 404);
-            }
+            $this->productService->deleteProduct($id);
             // Возвращаем успешный ответ
-            return response()->json([
-                'success' => true,
-                'message' => 'Товар успешно удален'
-            ]);
+            return $this->successResponse(ProductMessages::DELETED_SUCCESS);
+        } catch (ProductNotFoundException $e) {
+            return $this->notFoundResponse($e->getMessage());
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибка при удалении товара'
-            ], 500);
+            Log::error(ProductMessages::LOG_DELETE_ERROR, [
+                'id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return $this->errorResponse(ProductMessages::DELETE_ERROR);
         }
     }
 }
