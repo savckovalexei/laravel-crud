@@ -18,6 +18,11 @@
                     </button>
                 </div>
             </div>
+            <div class="col-md-6 text-end">
+                <div id="productsCount" class="text-muted">
+                    <i class="fas fa-box"></i> <span id="totalCount">Загрузка...</span>
+                </div>
+            </div>
         </div>
         
         <div id="productsTable">

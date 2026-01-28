@@ -68,10 +68,11 @@ class ProductController extends Controller
         
         // Получаем товары через сервис с применением фильтров
         $products = $this->productService->getAllProducts($filters);
-        // Возвращаем JSON ответ с HTML представлениями
+        // Возвращаем JSON ответ с HTML представлениями и общим количеством
         return $this->dataResponse([
             'html' => view('products.partials.table', compact('products'))->render(),
-            'pagination' => view('products.partials.pagination', compact('products'))->render()
+            'pagination' => view('products.partials.pagination', compact('products'))->render(),
+            'total' => $products->total()
         ]);
     }
 

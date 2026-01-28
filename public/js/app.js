@@ -33,6 +33,11 @@
             success: function(response) {
                 $('#productsTable').html(response.html);
                 $('#paginationContainer').html(response.pagination);
+               
+                // Обновляем общее количество товаров
+                if (response.total !== undefined) { 
+                    updateProductsCount(response.total);
+                }
                 
                 // Назначаем обработчики событий для пагинации
                 $('.pagination .page-link').click(function(e) {
@@ -151,4 +156,27 @@
         setTimeout(() => {
             alert.alert('close');
         }, 3000);
+    }
+    
+    function updateProductsCount(total) {
+        let countText = '';
+        if (total === 0) {
+            countText = 'Товары не найдены';
+        } else {
+            const lastDigit = total % 10;
+            const lastTwoDigits = total % 100;
+            
+            let word = 'товаров';
+            if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
+                word = 'товаров';
+            } else if (lastDigit === 1) {
+                word = 'товар';
+            } else if (lastDigit >= 2 && lastDigit <= 4) {
+                word = 'товара';
+            }
+            
+            countText = `Найдено: ${total} ${word}`;
+        }
+        
+        $('#totalCount').text(countText);
     }
